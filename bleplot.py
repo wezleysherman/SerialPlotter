@@ -64,11 +64,14 @@ async def echo(websocket):
 					pyr = [0, 0, 0]
 					velocity = 0
 					calcVelocity = 0
-
-					led_emitting = int.from_bytes(data[1:3], byteorder="little")#[unpack('<H', data[26:28])[0]]
+					led_emitting = []
+					idx = 1
+					while idx < 25:
+						led_emitting.append(int.from_bytes(data[idx:idx+2], byteorder="little"))#[unpack('<H', data[26:28])[0]]
+						idx += 2
 					#print("Reps: ", int.from_bytes(data[18:22], byteorder="little"))
 					#print("Velcoity: ", unpack('<f', data[22:26])[0])
-					#print(led_emitting)
+					print(led_emitting)
 					await websocket.send(
 						json.dumps({
 							"accel": acc,
