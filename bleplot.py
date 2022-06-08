@@ -7,8 +7,8 @@ import websockets
 import json
 
 #addr = "00:80:E1:21:8F:97"
-#addr = "00:80:E1:21:93:26"
-addr = "00:80:E1:21:94:B5"
+addr = "00:80:E1:21:93:26"
+#addr = "00:80:E1:21:94:B5"
 
 total_rec = 0
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -24,7 +24,7 @@ async def notification_handler(sender, data):
 	elif(data[0] == 4) :
 		print("DAta: ", data[2])
 	elif(data[0] == 5): 
-		print("Data: ", int.from_bytes(data[2:4], byteorder="little"))
+		print("Data: ", int.from_bytes(data[1:3], byteorder="little"))
 	dataQueue.put(data)
 	#sock.sendto(data, ("127.0.0.1", 1969))
 
@@ -65,7 +65,7 @@ async def echo(websocket):
 					velocity = 0
 					calcVelocity = 0
 
-					led_emitting = int.from_bytes(data[2:4], byteorder="little")#[unpack('<H', data[26:28])[0]]
+					led_emitting = int.from_bytes(data[1:3], byteorder="little")#[unpack('<H', data[26:28])[0]]
 					#print("Reps: ", int.from_bytes(data[18:22], byteorder="little"))
 					#print("Velcoity: ", unpack('<f', data[22:26])[0])
 					#print(led_emitting)
@@ -102,11 +102,12 @@ async def bluetooth_async():
 				#await client.stop_notify("0000FE23-8e22-4541-9d4c-21edae82ed19")
 				await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0100"))
 				#await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0200"))
-				#await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0300"))
 
 				await asyncio.sleep(2)
 				await client.start_notify("0000fe42-8e22-4541-9d4c-21edae82ed19", notification_handler)
-				await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0900"))
+				await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0300"))
+				await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0A08"))
+				#await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0900"))
 
 				#await asyncio.sleep(20)
 				#await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0500"))
