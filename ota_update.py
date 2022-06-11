@@ -19,10 +19,10 @@ firmware.close()
 #addr = "00:80:E1:21:8F:97"
 #addr = "00:80:E1:21:8F:98"
 
-addr = "00:80:E1:21:93:27"
+#addr = "00:80:E1:21:93:27"
 #addr = "00:80:E1:21:93:26"
 
-#addr = "00:80:E1:21:94:B6"
+addr = "00:80:E1:21:94:B6"
 
 total_rec = 0
 firmware_len = len(firmware_arr)
@@ -73,12 +73,12 @@ async def main():
 					await asyncio.sleep(3)
 					while(idx < firmware_len):
 						await asyncio.sleep(0.1)
-						end_idx = idx+100
+						end_idx = idx+180
 						if(end_idx > firmware_len):
 							end_idx = firmware_len
 						await client.write_gatt_char("0000fe24-8e22-4541-9d4c-21edae82ed19", firmware_arr[idx: end_idx])
 						print("writing firmware idx: ", idx)
-						idx += 100
+						idx += 180
 
 						if(end_idx == firmware_len):
 							print("Writing finish flag")
