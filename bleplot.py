@@ -8,20 +8,33 @@ import json
 
 #addr = "00:80:E1:21:8F:97"
 #addr = "00:80:E1:21:93:26"
-addr = "00:80:E1:21:94:B5"
-
-total_rec = 0
+#addr = "00:80:E1:21:94:B5"
+addr = "80DF2B35-61A8-78B7-169A-4FEECC5FDA6A"
+total_sec = 0
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 dataQueue = Queue()
 
 async def notification_handler(sender, data):
 	global sock
 	global dataQueue
-	idx = 1
-	while idx < 101:
-		#led_emitting.append(int.from_bytes(data[idx:idx+2], byteorder="little"))#[unpack('<H', data[26:28])[0]]
-		print(str(unpack('<f', data[idx:idx+4])[0]))
-		idx += 4
+	#print("notify")
+	if(data[0] == 5):
+		idx = 1
+		while idx < 101:
+			#led_emitting.append(int.from_bytes(data[idx:idx+2], byteorder="little"))#[unpack('<H', data[26:28])[0]]
+			#print(str(unpack('<f', data[idx:idx+4])[0]))
+			print(str(int.from_bytes(data[idx:idx+2], byteorder="little")))
+			idx += 2
+	'''
+	elif(data[0] == 0):
+		print("~~State of Health~~")
+		print("Charge status: ", data[1])
+		print("Heart Rate: ", data[2])
+		print("Battery: ", str(unpack('<f', data[3:7])[0]))
+		print("MPU Status: ", data[7])
+		print("HR Status: ", data[8])
+		print("HR Proximity: ", data[9])
+'''
 	dataQueue.put(data)
 	#sock.sendto(data, ("127.0.0.1", 1969))
 
@@ -103,13 +116,13 @@ async def bluetooth_async():
 				#await client.start_notify("0000fe42-8e22-4541-9d4c-21edae82ed19", notification_handler)
 				#await client.stop_notify("0000fe42-8e22-4541-9d4c-21edae82ed19")
 				#await client.stop_notify("0000FE23-8e22-4541-9d4c-21edae82ed19")
-				await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0100"))
 				#await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0200"))
 
 				await asyncio.sleep(2)
 				await client.start_notify("0000fe42-8e22-4541-9d4c-21edae82ed19", notification_handler)
-				await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0300"))
+				await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0100"))
 				await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0A0F"))
+				await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0300"))
 				#await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0900"))
 
 				#await asyncio.sleep(20)

@@ -73,12 +73,12 @@ async def main():
 					await asyncio.sleep(3)
 					while(idx < firmware_len):
 						await asyncio.sleep(0.1)
-						end_idx = idx+180
+						end_idx = idx+100
 						if(end_idx > firmware_len):
 							end_idx = firmware_len
 						await client.write_gatt_char("0000fe24-8e22-4541-9d4c-21edae82ed19", firmware_arr[idx: end_idx])
 						print("writing firmware idx: ", idx)
-						idx += 180
+						idx += 100
 
 						if(end_idx == firmware_len):
 							print("Writing finish flag")
