@@ -10,6 +10,8 @@ import json
 #addr = "00:80:E1:21:93:26"
 #addr = "00:80:E1:21:94:B5"
 addr = "80DF2B35-61A8-78B7-169A-4FEECC5FDA6A"
+#addr = "27ABEE7C-ACD5-8D15-0E96-E5D1BE9294D8"
+
 total_sec = 0
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 dataQueue = Queue()
@@ -17,7 +19,7 @@ dataQueue = Queue()
 async def notification_handler(sender, data):
 	global sock
 	global dataQueue
-	#print("notify")
+	print("notify")
 	if(data[0] == 5):
 		idx = 1
 		while idx < 101:
@@ -25,16 +27,14 @@ async def notification_handler(sender, data):
 			#print(str(unpack('<f', data[idx:idx+4])[0]))
 			print(str(int.from_bytes(data[idx:idx+2], byteorder="little")))
 			idx += 2
-	'''
+
 	elif(data[0] == 0):
 		print("~~State of Health~~")
-		print("Charge status: ", data[1])
-		print("Heart Rate: ", data[2])
-		print("Battery: ", str(unpack('<f', data[3:7])[0]))
-		print("MPU Status: ", data[7])
-		print("HR Status: ", data[8])
-		print("HR Proximity: ", data[9])
-'''
+		print("Prox status: ", data[1])
+		print("Charge Rate: ", data[2])
+		print("HR: ", data[3])
+		print("Bat Status: ", str(unpack('<f', data[4:8])[0]))
+
 	dataQueue.put(data)
 	#sock.sendto(data, ("127.0.0.1", 1969))
 
@@ -47,12 +47,20 @@ async def echo(websocket):
 			while not dataQueue.empty():
 				data = dataQueue.get()
 				if(data[0] == 2):
-					acc = [unpack('<f', data[2:6])[0], unpack('<f', data[6: 10])[0], unpack('<f', data[10: 14])[0]]
+					'''
+					NotifyCharData[0] = 0x02;
+					memcpy(&NotifyCharData[1], (unsigned char*)(&acc_buff[0]), 4);
+					memcpy(&NotifyCharData[5], (unsigned char*)(&acc_buff[1]), 4);
+					memcpy(&NotifyCharData[9], (unsigned char*)(&acc_buff[2]), 4);
+					memcpy(&NotifyCharData[13], (unsigned char*)(&velocity), 4);
+					memcpy(&NotifyCharData[17], (unsigned char*)(&calcVelocity), 4);
+					'''
+					acc = [unpack('<f', data[1:5])[0], unpack('<f', data[5: 9])[0], unpack('<f', data[9: 13])[0]]
 					#gyro = [unpack('<f', data[14:18])[0], unpack('<f', data[18: 22])[0], unpack('<f', data[22: 26])[0]]
 					#quat = [unpack('<f', data[26:30])[0], unpack('<f', data[30: 34])[0], unpack('<f', data[34: 38])[0], unpack('<f', data[38: 42])[0]]
-					pyr = [unpack('<f', data[14:18])[0], unpack('<f', data[18: 22])[0], unpack('<f', data[22: 26])[0]]
-					velocity = unpack('<f', data[26:30])[0]
-					calcVelocity = unpack('<f', data[30:34])[0]
+					pyr = [0, 0, 0]#[unpack('<f', data[14:18])[0], unpack('<f', data[18: 22])[0], unpack('<f', data[22: 26])[0]]
+					velocity = unpack('<f', data[13:17])[0]
+					calcVelocity = unpack('<f', data[17:21])[0]
 
 					led_emitting = [0]#[unpack('<H', data[26:28])[0]]
 					#print("Reps: ", int.from_bytes(data[18:22], byteorder="little"))
@@ -122,7 +130,7 @@ async def bluetooth_async():
 				await client.start_notify("0000fe42-8e22-4541-9d4c-21edae82ed19", notification_handler)
 				await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0100"))
 				await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0A0F"))
-				await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0300"))
+				await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0400"))
 				#await client.write_gatt_char("0000fe41-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("0900"))
 
 				#await asyncio.sleep(20)
