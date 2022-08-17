@@ -23,8 +23,12 @@ firmware.close()
 #addr = "00:80:E1:21:93:26"
 
 #addr = "00:80:E1:21:94:B6"
-addr = "2EB1C261-EA7A-DC32-AF8C-1C09DEAE15FD"
+#addr = "2EB1C261-EA7A-DC32-AF8C-1C09DEAE15FD"
 #addr = "1019F9F1-D1DF-7E3A-9F27-7467FA7D3267"
+
+addr = "670701C6-C4F0-18DE-2E81-965E54583B05"
+#addr = "9DD6CBA6-6824-FD78-EF0C-3EE69D0DDA2A"
+
 total_rec = 0
 firmware_len = len(firmware_arr)
 idx = 0
@@ -52,12 +56,12 @@ async def main():
 					print("s", service)
 					for char in service.characteristics:
 						print("c",char)
-				if addr == "00:80:E1:21:93:26" or addr == "00:80:E1:21:8F:97" or addr == "00:80:E1:21:94:B5":	
+				if addr == "00:80:E1:21:93:26" or addr == "9DD6CBA6-6824-FD78-EF0C-3EE69D0DDA2A" or addr == "00:80:E1:21:94:B5":	
 					print("found")
-					await client.write_gatt_char("0000fe43-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("010FFF"))
+					await client.write_gatt_char("0000fe43-8e22-4541-9d4c-21edae82ed19", bytes.fromhex("01"))
 					print("sent command")
 
-				elif addr == "00:80:E1:21:93:27" or addr == "1019F9F1-D1DF-7E3A-9F27-7467FA7D3267" or addr == "2EB1C261-EA7A-DC32-AF8C-1C09DEAE15FD":	
+				elif addr == "00:80:E1:21:93:27" or addr == "1019F9F1-D1DF-7E3A-9F27-7467FA7D3267" or addr == "670701C6-C4F0-18DE-2E81-965E54583B05":	
 					print(f"Connected: {client.is_connected}")
 					svcs = await client.get_services()
 					print("Services:")
